@@ -1,0 +1,123 @@
+import streamlit as st
+from data.panorama_queries import (
+    extremos_anual,
+    extremos_estacional
+)
+from components.charts import line_chart
+
+# =========================
+# CONFIG
+# =========================
+
+st.set_page_config(
+    page_title="Índices Climáticos",
+    layout="wide"
+)
+
+st.title("📊 Índices Climáticos Extremos (ETCCDI)")
+
+# =========================
+# METADATOS DE ÍNDICES
+# =========================
+
+INDICES = {
+    "PRCPTOT": {"label": "Precipitación total", "unidad": "mm"},
+    "SDII": {"label": "Intensidad media diaria", "unidad": "mm/día"},
+    "Rx1day": {"label": "Máx. precipitación 1 día", "unidad": "mm"},
+    "Rx5day": {"label": "Máx. precipitación 5 días", "unidad": "mm"},
+    "CDD": {"label": "Días secos consecutivos", "unidad": "días"},
+    "CWD": {"label": "Días húmedos consecutivos", "unidad": "días"},
+    "TXx": {"label": "Máx. temperatura máxima", "unidad": "°C"},
+    "TNn": {"label": "Mín. temperatura mínima", "unidad": "°C"},
+    "FD": {"label": "Días de helada", "unidad": "días"},
+    "SU": {"label": "Días cálidos", "unidad": "días"},
+    "TX90p": {"label": "Días cálidos extremos", "unidad": "%"},
+    "TN10p": {"label": "Noches frías extremas", "unidad": "%"},
+    "DTR": {"label": "Rango térmico diario", "unidad": "°C"},
+}
+
+# =========================
+# FILTROS
+# =========================
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    tipo = st.selectbox(
+        "Tipo de índice",
+        ["Anual", "Estacional"]
+    )
+
+with col2:
+    indice = st.selectbox(
+        "Índice",
+        options=list(INDICES.keys()),
+        format_func=lambda x: f"{x} – {INDICES[x]['label']}"
+    )
+
+with col3:
+    if tipo == "Estacional":
+        estacion = st.selectbox(
+            "Estación",
+            ["DJF", "MAM", "JJA", "SON"]
+        )
+    else:
+        estacion = None
+
+anio_inicio, anio_fin = st.slider(
+    "Período de análisis",
+    min_value=1950,
+    max_value=2025,
+    value=(1980, 2020),
+    step=1
+)
+
+# =========================
+# CONSULTA
+# =========================
+
+if tipo == "Anual":
+    df = extremos_anual(indice, anio_inicio, anio_fin)
+else:
+    df = extremos_estacional(indice, estacion, anio_inicio, anio_fin)
+
+# =========================
+# VALIDACIÓN
+# =========================
+
+if df.empty:
+    st.warning("No hay datos disponibles para los filtros seleccionados.")
+    st.stop()
+
+# =========================
+# GRÁFICO PRINCIPAL
+# =========================
+
+st.subheader("📈 Evolución temporal")
+
+fig = line_chart(
+    df=df,
+    x="anio",
+    y="valor",
+    title=f"{indice} – {INDICES[indice]['label']}",
+    y_label=INDICES[indice]["unidad"]
+)
+
+st.plotly_chart(fig, use_container_width=True)
+
+# =========================
+# GRÁFICO SECUNDARIO
+# =========================
+
+st.subheader("📊 Valores anuales")
+
+st.bar_chart(
+    df.set_index("anio")["valor"]
+)
+
+# =========================
+# TABLA (OPCIONAL)
+# =========================
+
+with st.expander("📄 Ver datos"):
+    st.dataframe(df)
