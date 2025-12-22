@@ -52,6 +52,7 @@ st.markdown("---")
 st.markdown("""## ¿Qué es el ENSO?
 ##### 🧭 Fenómeno de escala global que actúa cómo un patrón climático natural "anómalo" del océano Pacífico tropical.
 ###### ➬ Desempeña un papel fundamental en la variabilidad interanual del clima sudamericano.
+###### ➬ Sus fases varían alternandose, cambiando su intensidad .
 """)
 
 
@@ -153,7 +154,6 @@ st.markdown(
     *(Mención de rolling window)*
     """
 )
-
 st.markdown("---")
 
 # =========================
@@ -161,27 +161,37 @@ st.markdown("---")
 # =========================
 st.markdown("## 🌐 Modelado y estructura elegida")
 
-st.markdown(
-    """
-    #### **Tablas de hechos**
-    ##### - Clima diario (temperatura y precipitación – granularidad diaria)
-    ##### - Valores extremos ANUALES (Conjunto de parámetros granularidad anual)
-    ##### - Valores extremos ESTACIONALES (Conjunto de parámetros granularidad anual por estación)
+# Crear columnas: izquierda (texto) | derecha (imagen)
+col_texto, col_img = st.columns([2, 1])  # ajustá proporción si querés
 
-    
-    #### **Dimensiones**
-    ##### - Fecha (Dia, Mes, Año, Trimestre, Estación, Dia Juliano)
-    ##### - ENSO (MEI, ONI, Nino3.4, Fase ENSO, etc.)
+with col_texto:
+    st.markdown(
+        """
+        #### **Tablas de hechos**
+        ##### - Clima diario (temperatura y precipitación – granularidad diaria)
+        ##### - Valores extremos **ANUALES** (conjunto de parámetros, granularidad anual)
+        ##### - Valores extremos **ESTACIONALES** (conjunto de parámetros, granularidad anual por estación)
 
-    #### *Beneficios:*
-    ##### - Claridad semántica (Procesos de negocio reales y distintos)
-    ##### - Granularidad adecuada
-    ##### - Facilidad de mantenimiento
-    **Motor analítico**
-    - DuckDB
-    - Consultas SQL embebidas en Python
-    """
-)
+        #### **Dimensiones**
+        ##### - Fecha (Día, Mes, Año, Trimestre, Estación, Día Juliano)
+        ##### - ENSO (MEI, ONI, Niño 3.4, Fase ENSO, etc.)
+
+        #### *Beneficios*
+        ##### - Claridad semántica (procesos de negocio reales y distintos)
+        ##### - Granularidad adecuada
+        ##### - Facilidad de mantenimiento
+
+        **Motor analítico**
+        - DuckDB  
+        - Consultas SQL embebidas en Python
+        """
+    )
+with col_img:
+    with st.expander("Ver esquema dimensional"):
+        st.image(
+            "dashboard/modelo_dimensional.png",
+            use_container_width=True
+        )
 
 st.markdown("---")
 
