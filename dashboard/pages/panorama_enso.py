@@ -33,7 +33,7 @@ st.markdown("### 📅 Período de análisis")
 anio_inicio, anio_fin = st.slider(
     "Seleccionar rango temporal",
     min_value=1961,
-    max_value=2025,
+    max_value=2024,
     value=(1980, 2020)
 )
 
@@ -165,52 +165,78 @@ else:
 
     st.plotly_chart(fig, use_container_width=True)
 
-# ─────────────────────────────
-# PREDOMINANCIA POR INTENSIDAD (DEBAJO DE c1 y c2)
-# ─────────────────────────────
-st.markdown("### 📊 Predominancia ENSO por año (según intensidad)")
 
-intensidad = st.selectbox(
-    "Intensidad ENSO",
-    ["Débil", "Moderado", "Fuerte"]
-)
+st.markdown("---")
+st.markdown("### 📦 Distribución y valores atípicos de índices ENSO")
 
-df_enso = get_enso_por_anio_fase_intensidad(intensidad)
+# Selectores
+c_b1, c_b2 = st.columns(2)
 
-if df_enso.empty:
-    st.warning("No hay datos para la intensidad seleccionada.")
+with c_b1:
+    fase_box = st.selectbox(
+        "Fase ENSO (boxplot)",
+        ["Niño", "Niña", "Neutro"]
+    )
+
+with c_b2:
+    indices_box = st.multiselect(
+        "Índices a comparar",
+        list(INDICES_ENSO.keys()),
+        default=["ONI", "Niño 3.4", "MEI"]
+    )
+
+if not indices_box:
+    st.warning("Seleccioná al menos un índice.")
     st.stop()
 
-df_pivot = (
-    df_enso
-    .pivot(index="anio", columns="fase", values="meses")
-    .fillna(0)
-    .sort_index()
+fig_box = go.Figure()
+
+for idx_label in indices_box:
+    df_box = get_indice_por_fase_y_periodo(
+        indice_sql=INDICES_ENSO[idx_label],
+        fase=fase_box,
+        anio_inicio=anio_inicio,
+        anio_fin=anio_fin
+    )
+
+    if df_box.empty:
+        continue
+
+    fig_box.add_trace(go.Box(
+        y=df_box["valor"],
+        name=idx_label,
+        boxmean="sd",       # media + desviación estándar
+        jitter=0.3,
+        pointpos=-1.8,
+        marker=dict(size=5),
+        line=dict(width=1.5)
+    ))
+
+fig_box.update_layout(
+    title=f"Distribución de índices ENSO durante fase {fase_box}",
+    yaxis_title="Valor del índice",
+    xaxis_title="Índice ENSO",
+    showlegend=False,
+    height=450
 )
 
-st.bar_chart(df_pivot)
+st.plotly_chart(fig_box, use_container_width=True)
 
-# ─────────────────────────────
-# BLOQUE DE TORTAS
-# ─────────────────────────────
-st.markdown("---")
-st.markdown("### 🌀 Distribución ENSO – Últimos 20 años")
 
-# SELECTOR COMÚN (ARRIBA DE AMBOS GRÁFICOS)
+
+# SELECTOR COMÚN
 estacion = st.selectbox(
     "Seleccionar estación climatológica",
     ["DJF", "MAM", "JJA", "SON"],
     key="estacion_pie"
 )
 
-c3, c4 = st.columns(2)
+c3 = st.columns(1)
+col = c3[0]   # ← extraes la columna
 
-# ─────────────────────────────
-# TORTA ENSO POR ESTACIÓN
-# ─────────────────────────────
-with c3:
+with col:
+    st.subheader("📉 Distribución ENSO últimos 20 años")
     df_estacion = get_enso_por_estacion_20_anios(estacion)
-
     fig_estacion = px.pie(
         df_estacion,
         names="fase",
@@ -225,24 +251,3 @@ with c3:
     )
 
     st.plotly_chart(fig_estacion, use_container_width=True)
-
-# ─────────────────────────────
-# TORTA INTENSIDAD ENSO
-# ─────────────────────────────
-with c4:
-    df_intensidad = get_intensidad_ultimos_20_anios()
-
-    fig_intensidad = px.pie(
-        df_intensidad,
-        names="intensidad",
-        values="porcentaje",
-        title="Distribución porcentual de intensidad",
-        hole=0.45
-    )
-
-    fig_intensidad.update_layout(
-        legend_title_text="Intensidad",
-        margin=dict(t=40, b=20)
-    )
-
-    st.plotly_chart(fig_intensidad, use_container_width=True)
