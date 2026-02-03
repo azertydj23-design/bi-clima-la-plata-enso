@@ -1,35 +1,101 @@
 # Impacto del ENSO en los Índices de Precipitación y Temperatura Extrema en la Región de La Plata 🌊🌡️
-**Proyecto Final de Tecnologias Aplicadas para Business Intelligence (TABI)**
 
 ## 🎯 Resumen del Proyecto
-Este repositorio contiene una solución integral de **Business Intelligence** diseñada para monitorear y analizar la influencia del fenómeno **El Niño–Oscilación del Sur (ENSO)** sobre los extremos climáticos en la región de La Plata. 
+Este proyecto desarrolla una solución de Business Intelligence (BI) para analizar la influencia del fenómeno El Niño–Oscilación del Sur (ENSO) sobre los extremos climáticos en la ciudad de La Plata (1961-2024).
 
-El valor principal de este trabajo radica en la **integración de fuentes heterogéneas** dentro de un **modelo dimensional** orientado a la toma de decisiones.
+A través de la integración de fuentes de datos globales (NOAA) y locales (SMN), se construyó un ecosistema de datos que permite identificar patrones estacionales y anuales, facilitando la toma de decisiones en gestión del riesgo y planificación urbana.
 
 ## 🏗️ Ingeniería y Arquitectura de Datos
-A diferencia de un análisis exploratorio convencional, aquí se aplicaron principios de BI para estructurar la información:
 
-- **Fuentes de Datos:**
-  - 🌐 **Globales (NOAA):** Índices ONI, SOI y MEI para la clasificación de fases ENSO.
-  - 📍 **Locales (SMN):** Series diarias procesadas para obtener índices **ETCCDI** (Rx1day, CDD, R99pTOT, etc.).
-- **Modelo Dimensional (Esquema en Estrella):**
-  - **Tabla de Hechos:** Centraliza las métricas de extremos climáticos por periodo.
-  - **Dimensiones:** Jerarquías temporales (años, estaciones) y dimensión ENSO (Fase: Niño/Niña, Intensidad: Débil a Fuerte).
+El núcleo técnico del proyecto es un Modelo Dimensional (Esquema de Constelación) que permite consultar datos con diferentes granularidades:
 
+- Hechos (Facts): Registros diarios de clima y tablas de extremos climáticos (ETCCDI) calculados a nivel anual y estacional.
+- Dimensiones (Dims): Dimensión de Tiempo jerárquica y Dimensión ENSO (con fases Niño, Niña y Neutro e intensidades).
+
+```mermaid
+erDiagram
+    DIM_FECHA ||--o{ FACT_CLIMA : "fecha_id"
+    DIM_FECHA ||--o{ FACT_EXTREMOS_ANUAL : "anio"
+    DIM_FECHA ||--o{ FACT_EXTREMOS_ESTACIONAL : "anio, estacion"
+    DIM_ENSO ||--o{ FACT_CLIMA : "anio, mes"
+    
+    DIM_FECHA {
+        int fecha_id PK
+        date fecha
+        int anio
+        int mes
+        string estacion_anio
+    }
+
+    DIM_ENSO {
+        int enso_id PK
+        int anio
+        int mes
+        string fase
+        float oni
+    }
+
+    FACT_CLIMA {
+        int fecha_id FK
+        float t_min
+        float t_max
+        float pp
+    }
+
+    FACT_EXTREMOS_ANUAL {
+        int anio FK
+        float PRCPTOT
+        float Rx1day
+        float CDD
+    }
+
+    FACT_EXTREMOS_ESTACIONAL {
+        int anio FK
+        string estacion FK
+        float PRCPTOT
+        float Rx1day
+    }
+```
 
 
 ## 🛠️ Stack Tecnológico
 - **Procesamiento ETL:** `Python` (`Pandas`, `NumPy`)
 - **Motor de Datos:** `DuckDB`
-- **Visualización:** `Streamlit` (Dashboard Interactivo)
+- **Dashboard**: `Streamlit` (Desplegado en Streamlit Cloud).
+- **Librerías clave**: `pandas`, `scipy` (análisis estadístico), `statsmodels`.
 - **Metodología:** Estándares internacionales **ETCCDI** para detección de cambio climático.
 
-## 📊 Portal Interactivo e Insights
-El proyecto incluye un dashboard que permite explorar:
-1. **Correlación de Fases:** Impacto visual de El Niño vs. La Niña en la intensidad de las lluvias.
-2. **Análisis Estacional:** Variación de extremos térmicos y hídricos según la estación del año.
-3. **Soporte de Decisiones:** Información procesada útil para planificación urbana y gestión del riesgo hídrico en la ciudad.
+## 📂 Estructura del repositorio
+
+- `app.py`: Punto de entrada del Dashboard interactivo.
+- 📁 `pages/`: Módulos del dashboard (Panorama Climático, Análisis ENSO, etc.).
+- 📁 `data/`: Datos crudos y curados (en formato CSV).
+- 📁 `db/`: Lógica de conexión y persistencia con DuckDB.
+- 📁 `notebooks/`: Análisis exploratorios y ETL.
+- 📁 `model/`: Implementación del modelo dimensional
+- 📁 `queries/`: Queries al modelo dimensional para el dashboard
+
+## 🚀 Ejecución Local
+
+1. **Clonar el repo:** `git clone https://github.com/tu-usuario/bi-clima-la-plata-enso.git`
+2. **Instalar dependencias:** `pip install -r requirements.txt`
+3. **Procesamiento de Datos (ETL):** 
+    - Revisar `notebooks/eda-temp-pp.ipynb` para la imputación de datos meteorológicos.
+    - Revisar `notebooks/eda-indices-enso.ipynb` para la imputación de tabla de indices.
+    - Revisar `notebooks/calculo-indices-extremos.ipynb` para el cálculo de índices ETCCDI.
+4. **Construir el Data Warehouse:** `python -m model.build_model` (Esto genera la base de datos DuckDB y carga el modelo dimensional).
+5. **Lanzar el Dashboard:** `streamlit run app.py`
+
+## Posibles trabajos a futuro
+Este proyecto sienta las bases para una plataforma de monitoreo climático robusta. Las líneas de expansión incluyen:
+
+- **Ingesta en Tiempo Real:** Automatizar la conexión con la API del SMN para actualizar el modelo dimensional diariamente sin intervención manual.
+- **Modelos Predictivos:** Integrar modelos de Machine Learning para intentar predecir la probabilidad de eventos extremos basados en proyecciones del ONI/MEI.
+- **Expansión Geográfica:** Replicar la arquitectura para otras estaciones meteorológicas de la Provincia de Buenos Aires para un análisis comparativo regional.
+- **Exportación de Reportes:** Implementar la generación automática de reportes en PDF con los insights detectados durante cada estación del año.
 
 ---
-**Materia:** Tecnologías Aplicadas al Business Intelligence (TABI)  
-**Facultad de Informática - Universidad Nacional de La Plata (UNLP)**
+
+**Autores**: [Franco Leando Kumichel](https://github.com/francokumichel), [Juan Francisco Volpe Giangiordano](https://github.com/JJuanVolpe)
+**Institución**: Facultad de Informática - Universidad Nacional de La Plata (UNLP)
+**Materia**: Tecnologías Aplicadas al Business Intelligence (TABI)
