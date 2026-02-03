@@ -3,6 +3,7 @@ pandas
 numpy
 scipy>=1.13.0
 statsmodels>=0.14.0
+plotly
 matplotlib
 seaborn
 duckdb

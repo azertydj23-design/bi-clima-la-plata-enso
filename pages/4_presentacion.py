@@ -163,7 +163,7 @@ st.markdown("---")
 st.markdown("## 🌐 Modelado y estructura elegida")
 
 # Crear columnas: izquierda (texto) | derecha (imagen)
-col_texto, col_img = st.columns([2, 1])  # ajustá proporción si querés
+col_texto, col_img = st.columns([1, 2])  # ajustá proporción si querés
 
 with col_texto:
     st.markdown(
