@@ -97,5 +97,7 @@ Este proyecto sienta las bases para una plataforma de monitoreo climático robus
 ---
 
 **Autores**: [Franco Leando Kumichel](https://github.com/francokumichel), [Juan Francisco Volpe Giangiordano](https://github.com/JJuanVolpe)
+
 **Institución**: Facultad de Informática - Universidad Nacional de La Plata (UNLP)
+
 **Materia**: Tecnologías Aplicadas al Business Intelligence (TABI)
